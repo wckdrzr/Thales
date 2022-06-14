@@ -1,0 +1,12 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <AutoBuidlNumberTaskAssembly>..\tools\net5.0\auto-build-number.dll</AutoBuidlNumberTaskAssembly>
+  </PropertyGroup>
+
+  <UsingTask AssemblyFile="$(AutoBuidlNumberTaskAssembly)" TaskName="Wckdrzr.AutomaticBuildNumber.MSBuild.OnBuild" />
+
+  <Target Name="AutoBuildNumber" AfterTargets="AfterBuild">
+    <Wckdrzr.AutomaticBuildNumber.MSBuild.OnBuild ConfigFile="$(MSBuildProjectDirectory)\auto_build_number_config.json" />
+  </Target>
+</Project>
