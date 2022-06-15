@@ -1,11 +1,9 @@
 <Project Sdk="Microsoft.NET.Sdk">
-
   <PropertyGroup>
     <TargetFramework>net5.0</TargetFramework>
     <RootNamespace>Wckdrzr.AutomaticBuildNumber</RootNamespace>
     <OutputType>Exe</OutputType>
   </PropertyGroup>
-
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
@@ -13,4 +11,10 @@
     <PackageReference Include="Microsoft.Build.Framework" Version="17.2.0" />
     <PackageReference Include="Microsoft.Build.Utilities.Core" Version="17.2.0" />
   </ItemGroup>
-  </Project>
+  <PropertyGroup Label="AutoBuildNumber">
+    <MajorVersion>0</MajorVersion>
+    <MinorVersion>0</MinorVersion>
+    <Revision>1</Revision>
+    <BuildNumber>5505</BuildNumber>
+  </PropertyGroup>
+</Project>

@@ -8,58 +8,34 @@ namespace Wckdrzr.AutomaticBuildNumber
 {
 	public class Executor
 	{
-		public config _loadedConfig;
-        private string _configFilename;
+		private FileServices fs;
+		public PropertyGroup _loadedConfig;
 		private bool _setMajor;
 		private bool _setMinor;
 
-        public Executor(string configFilename)
+        public Executor()
 		{
-			_configFilename = configFilename;
-			_loadedConfig = LoadConfig(configFilename);
+			fs = new FileServices();
+			_loadedConfig = fs.config;
 
 			_setMajor = Convert.ToBoolean(Environment.GetEnvironmentVariable($"{_loadedConfig.EnvironmentVariable_Prefix}_Major"));
 			_setMinor = Convert.ToBoolean(Environment.GetEnvironmentVariable($"{_loadedConfig.EnvironmentVariable_Prefix}_Minor"));
 		}
 
-        private config LoadConfig(string configFilename)
-        {
-			try
-			{
-				return JsonSerializer.Deserialize<config>(File.ReadAllText(configFilename));
-			}
-			catch (FileNotFoundException)
-			{
-				Console.WriteLine($"Specified Config file provided '{configFilename}' cannot be found!");
-			}
-			catch (FileLoadException)
-			{
-				Console.WriteLine($"Specified Config file provided '{configFilename}' cannot be read correctly, is it valid JSON?");
-			}
-			catch (Exception ex)
-            {
-				Console.WriteLine($"Unexpected error: {ex.Message}");
-            }
-
-			return null;
-		}
-
 		public void Execute()
         {
-			FileWriter fw = new FileWriter(_configFilename);
-
 			//Calculate Build Numbers
 			CalculateBuildVersion();
 
-			//Write VersionInfo	
-			fw.WriteAssemblyInfoFile();
+            //Write VersionInfo	
+            fs.WriteAssemblyInfoFile();
 
-			//Write Controller if requested
-			if (_loadedConfig.AddVersionController)
-				fw.WriteVersionRoute();
+            //Write Controller if requested
+            if (_loadedConfig.AddVersionController)
+                fs.WriteVersionRoute();
 
-			//Save Config File
-			fw.WriteConfigUpdate();
+            //Save Config Data bacl to CSPROJ
+            fs.WriteAppConfig();
 		}
 
         private void CalculateBuildVersion()
@@ -77,7 +53,7 @@ namespace Wckdrzr.AutomaticBuildNumber
 
             BuildVersion += (int)SecondsSinceMidnight;
 
-			_loadedConfig.BuildVersion = BuildVersion;
+			_loadedConfig.BuildNumber = BuildVersion;
 			
 			if (_setMinor)
             {
@@ -88,8 +64,6 @@ namespace Wckdrzr.AutomaticBuildNumber
 			{
 				_loadedConfig.MajorVersion++;
 			}
-
-			Console.WriteLine($"Build Number : {_loadedConfig.VersionNumber()}");
         }
 
 		public void GetVersion()

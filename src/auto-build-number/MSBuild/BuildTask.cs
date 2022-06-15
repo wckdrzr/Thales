@@ -11,8 +11,10 @@ namespace Wckdrzr.AutomaticBuildNumber.MSBuild
         public override bool Execute()
         {
             //Entrypoint
-            Executor e = new Executor(ConfigFile);
-            e.Execute();
+            Console.WriteLine("Automatic Version Number Package running...");
+            Executor runner = new Executor();
+            runner.Execute();
+            Console.WriteLine("Version Number update complete");
             return true;
         }
     }
