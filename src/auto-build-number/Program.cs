@@ -1,17 +1,12 @@
 ﻿using System;
-using System.IO;
-using System.Net.Http.Headers;
-using System.Text.Json;
-using Wckdrzr.AutomaticBuildNumber.Config;
-using Wckdrzr.AutomaticBuildNumber.IO;
 
-namespace Wckdrzr.AutomaticBuildNumber
+namespace Wckdrzr.AutomaticVersionUpdate
 {
     class Program
     {
         static void Main(string[] args)
         {
-            Console.WriteLine("Auto Build Number Pacage Runnning...");
+            Console.WriteLine("Auto Build Number Package Running...");
 
             Executor e = new Executor();
             e.Execute();

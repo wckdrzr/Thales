@@ -4,16 +4,16 @@ using System.Collections.Generic;
 using System.Runtime.Serialization;
 using System.Reflection.Metadata.Ecma335;
 
-namespace Wckdrzr.AutomaticBuildNumber.Config
+namespace Wckdrzr.AutomaticVersionUpdate.Config
 
 {
 	[XmlRoot(ElementName = "PropertyGroup")]
 	public class PropertyGroup
 	{
-		private const string ENV_PREFIX = "ABN";
-		private const string VERSIONFILENAME = "VersionInfo";
+		private const string EnvPrefix = "ABN";
+		private const string VersionFilename = "VersionInfo";
 
-		private string _envPrifix;
+		private string _envPrefix;
 		private string _versionInformationFilename;
 
 		[XmlAttribute(AttributeName = "Label")]
@@ -30,14 +30,14 @@ namespace Wckdrzr.AutomaticBuildNumber.Config
 		[XmlElement(ElementName = "VersionInformationFilename")]
 		public string VersionInformationFilename
 		{
-			get{ return _versionInformationFilename == null ? VERSIONFILENAME : _versionInformationFilename; }
-			set{ _versionInformationFilename = value; }
+			get => _versionInformationFilename ?? VersionFilename;
+			set => _versionInformationFilename = value;
 		}
 		[XmlElement(ElementName = "EnvironmentVariable_Prefix")]
-		public string EnvironmentVariable_Prefix
+		public string EnvironmentVariablePrefix
 		{
-			get { return _envPrifix == null ? ENV_PREFIX : _envPrifix;	}
-			set { _envPrifix = value; }
+			get => _envPrefix ?? EnvPrefix;
+			set => _envPrefix = value;
 		}
 		[XmlElement(ElementName = "AddVersionController")]
 		public bool AddVersionController { get; set; }
@@ -45,12 +45,12 @@ namespace Wckdrzr.AutomaticBuildNumber.Config
 
 		public bool ShouldSerializeEnvironmentVariable_Prefix()
 		{
-			return (!EnvironmentVariable_Prefix.Equals(ENV_PREFIX));
+			return (!EnvironmentVariablePrefix.Equals(EnvPrefix));
 		}
 
 		public bool ShouldSerializeVersionInformationFilename()
 		{
-			return (!VersionInformationFilename.Equals(VERSIONFILENAME));
+			return (!VersionInformationFilename.Equals(VersionFilename));
 		}
 
 		public bool ShouldSerializeAddVersionController()

@@ -4,23 +4,21 @@ using System.IO;
 using System.Xml;
 using System.Xml.Serialization;
 
-namespace Wckdrzr.AutomaticBuildNumber.IO
+namespace Wckdrzr.AutomaticVersionUpdate.IO
 {
     public class Serializer
     {
         public T Deserialize<T>(string input) where T : class
         {
-            System.Xml.Serialization.XmlSerializer ser = new System.Xml.Serialization.XmlSerializer(typeof(T));
+            XmlSerializer ser = new XmlSerializer(typeof(T));
 
-            using (StringReader sr = new StringReader(input))
-            {
-                return (T)ser.Deserialize(sr);
-            }
+            using StringReader sr = new StringReader(input);
+            return (T)ser.Deserialize(sr);
         }
 
-        public string Serialize<T>(T ObjectToSerialize)
+        public string Serialize<T>(T objectToSerialize)
         {
-            XmlSerializer xmlSerializer = new XmlSerializer(ObjectToSerialize.GetType());
+            XmlSerializer xmlSerializer = new XmlSerializer(objectToSerialize.GetType());
 
             var settings = new XmlWriterSettings
             {
@@ -30,12 +28,10 @@ namespace Wckdrzr.AutomaticBuildNumber.IO
 
             var ns = new XmlSerializerNamespaces(new[] { XmlQualifiedName.Empty });
 
-            using (var stream = new StringWriter())
-            using (var writer = XmlWriter.Create(stream, settings))
-            {
-                xmlSerializer.Serialize(writer, ObjectToSerialize, ns);
-                return stream.ToString();
-            }
+            using var stream = new StringWriter();
+            using var writer = XmlWriter.Create(stream, settings);
+            xmlSerializer.Serialize(writer, objectToSerialize, ns);
+            return stream.ToString();
         }
     }
 } 

@@ -1,7 +1,7 @@
 ﻿using System;
-namespace Wckdrzr.AutomaticBuildNumber.Config
+namespace Wckdrzr.AutomaticVersionUpdate.Config
 {
-	public class config
+	public class Config
 	{
         public string Company { get; set; }
         public string Copyright { get; set; }
@@ -16,7 +16,7 @@ namespace Wckdrzr.AutomaticBuildNumber.Config
 
         public string OutputFileName { get; set; }
         public bool AddVersionController { get; set; }
-        public string EnvironmentVariable_Prefix { get; set; }
+        public string EnvironmentVariablePrefix { get; set; }
 
         public string VersionNumber()
         {

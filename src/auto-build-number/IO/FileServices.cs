@@ -1,44 +1,40 @@
 ﻿using System;
 using System.IO;
 using System.Linq;
-using System.Text.Json;
 using System.Xml;
-using System.Xml.Linq;
 using System.Xml.Serialization;
-using Microsoft.Build.Utilities;
-using Wckdrzr.AutomaticBuildNumber.Config;
+using Wckdrzr.AutomaticVersionUpdate.Config;
 
-namespace Wckdrzr.AutomaticBuildNumber.IO
+namespace Wckdrzr.AutomaticVersionUpdate.IO
 {
 	public class FileServices
 	{
-		public PropertyGroup config;
-		private string ConfigFilename;
-		private Serializer xmlSerializer;
-		private const string APPLICATION_NAME = "AutoBuildNumber";
-		private const string CSPROJ_PATH = "../../../";
+		public readonly PropertyGroup Config;
+		private readonly Serializer _xmlSerializer;
+		private const string ApplicationName = "AutoBuildNumber";
+		private const string CsprojPath = "../../../";
 
 		public FileServices()
 		{
-			xmlSerializer = new Serializer();	
+			_xmlSerializer = new Serializer();	
 
-			Project CSProjectFile = xmlSerializer.Deserialize<Project>(File.ReadAllText(GetPropertyFileLocation()));
+			Project csProjectFile = _xmlSerializer.Deserialize<Project>(File.ReadAllText(GetPropertyFileLocation()));
 
-			for (int i=0; i<CSProjectFile.PropertyGroup.Count; i++)
+			foreach (var propertyGroup in csProjectFile.PropertyGroup)
 			{
-				if (CSProjectFile.PropertyGroup[i].Label == APPLICATION_NAME)
+				if (propertyGroup.Label == ApplicationName)
 				{
-					config = CSProjectFile.PropertyGroup[i];
+					Config = propertyGroup;
 				}
-            }
+			}
 
-			if (config == null)
-				config = CreateDefaultConfig();
+			if (Config == null)
+				Config = CreateDefaultConfig();
 		}
 
 		private string GetPropertyFileLocation()
         {
-			DirectoryInfo di = new DirectoryInfo(CSPROJ_PATH);
+			DirectoryInfo di = new DirectoryInfo(CsprojPath);
 			FileInfo[] projectFile = di.GetFiles("*.csproj");
 
 			if (projectFile.Count() > 1)
@@ -49,41 +45,44 @@ namespace Wckdrzr.AutomaticBuildNumber.IO
 
         private PropertyGroup CreateDefaultConfig()
         {
-			PropertyGroup defaultConfig = new PropertyGroup{ Label = APPLICATION_NAME, MajorVersion = 0, MinorVersion = 0, RevisionVersion = 1, BuildNumber=0, IsDefaultConfig = true};
+			PropertyGroup defaultConfig = new PropertyGroup{ Label = ApplicationName, MajorVersion = 0, MinorVersion = 0, RevisionVersion = 1, BuildNumber=0, IsDefaultConfig = true};
 			return defaultConfig;
         }
 
         public bool WriteAppConfig()
         {
-			string newPropertyString = xmlSerializer.Serialize<PropertyGroup>(config);
+			string newPropertyString = _xmlSerializer.Serialize<PropertyGroup>(Config);
 
 			try
 			{
 				string fileContents = File.ReadAllText(GetPropertyFileLocation());
-				XmlDocument projFileXML = new XmlDocument();
-				projFileXML.LoadXml(fileContents);
+				XmlDocument projFileXml = new XmlDocument();
+				projFileXml.LoadXml(fileContents);
 
 				XmlDocument tempDoc = new XmlDocument();
 				tempDoc.LoadXml(newPropertyString);
 
 				XmlNode oldNode;
-				XmlNode parent;
+				XmlNode parent = null;
 
 				//check if we've loaded config or created a default
-				if (!config.IsDefaultConfig)
+				if (!Config.IsDefaultConfig)
 				{
-					oldNode = projFileXML.SelectSingleNode("/Project/PropertyGroup[@Label='AutoBuildNumber']");
-					parent = oldNode.ParentNode;
-					parent.RemoveChild(oldNode);
+					oldNode = projFileXml.SelectSingleNode("/Project/PropertyGroup[@Label='AutoBuildNumber']");
+					if (oldNode != null)
+					{
+						parent = oldNode.ParentNode;
+						parent.RemoveChild(oldNode);
+					}
 				}
 				else
                 {
-					oldNode = projFileXML.SelectSingleNode("/Project");
+					oldNode = projFileXml.SelectSingleNode("/Project");
 					parent = oldNode;
 				}
 
 				XmlNode newNode = tempDoc.DocumentElement;
-				XmlNode importedNode = projFileXML.ImportNode(newNode, true);
+				XmlNode importedNode = projFileXml.ImportNode(newNode, true);
 				parent.AppendChild(importedNode);
 
 				var settings = new XmlWriterSettings
@@ -94,11 +93,9 @@ namespace Wckdrzr.AutomaticBuildNumber.IO
 
 				var ns = new XmlSerializerNamespaces(new[] { XmlQualifiedName.Empty });
 
-				using (var stream = new StreamWriter(GetPropertyFileLocation()))
-				using (var writer = XmlWriter.Create(stream, settings))
-				{
-					projFileXML.Save(writer);
-				}
+				using var stream = new StreamWriter(GetPropertyFileLocation());
+				using var writer = XmlWriter.Create(stream, settings);
+				projFileXml.Save(writer);
 			}
 			catch (Exception ex)
 			{
@@ -115,16 +112,16 @@ namespace Wckdrzr.AutomaticBuildNumber.IO
                 "using System.Reflection;",
                 "using System.Runtime.InteropServices;",
                 " ",
-                $"[assembly: AssemblyVersion(\"{config.VersionNumber()}\")]"
+                $"[assembly: AssemblyVersion(\"{Config.VersionNumber()}\")]"
             };
 
             try
             {
 				string filename = "VersionInfo";
 
-				if (string.IsNullOrEmpty(config.VersionInformationFilename))
+				if (string.IsNullOrEmpty(Config.VersionInformationFilename))
 				{
-					filename = config.VersionInformationFilename;
+					filename = Config.VersionInformationFilename;
 				}
 				
 				File.WriteAllLines($"../../../{filename}.cs", fileContents);

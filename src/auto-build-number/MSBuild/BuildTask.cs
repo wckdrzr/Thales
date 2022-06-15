@@ -2,12 +2,10 @@
 using System.IO;
 using Microsoft.Build.Framework;
 using Microsoft.Build.Utilities;
-namespace Wckdrzr.AutomaticBuildNumber.MSBuild
+namespace Wckdrzr.AutomaticVersionUpdate.MSBuild
 {
     public class OnBuild : Task
     {
-        public string ConfigFile { get; set; }
-
         public override bool Execute()
         {
             //Entrypoint

@@ -1,25 +1,23 @@
 ﻿using System;
-using System.IO;
-using System.Text.Json;
-using Wckdrzr.AutomaticBuildNumber.Config;
-using Wckdrzr.AutomaticBuildNumber.IO;
+using Wckdrzr.AutomaticVersionUpdate.Config;
+using Wckdrzr.AutomaticVersionUpdate.IO;
 
-namespace Wckdrzr.AutomaticBuildNumber
+namespace Wckdrzr.AutomaticVersionUpdate
 {
 	public class Executor
 	{
-		private FileServices fs;
-		public PropertyGroup _loadedConfig;
-		private bool _setMajor;
-		private bool _setMinor;
+		private readonly FileServices _fs;
+		private readonly PropertyGroup _loadedConfig;
+		private readonly bool _setMajor;
+		private readonly bool _setMinor;
 
         public Executor()
 		{
-			fs = new FileServices();
-			_loadedConfig = fs.config;
+			_fs = new FileServices();
+			_loadedConfig = _fs.Config;
 
-			_setMajor = Convert.ToBoolean(Environment.GetEnvironmentVariable($"{_loadedConfig.EnvironmentVariable_Prefix}_Major"));
-			_setMinor = Convert.ToBoolean(Environment.GetEnvironmentVariable($"{_loadedConfig.EnvironmentVariable_Prefix}_Minor"));
+			_setMajor = Convert.ToBoolean(Environment.GetEnvironmentVariable($"{_loadedConfig.EnvironmentVariablePrefix}_Major"));
+			_setMinor = Convert.ToBoolean(Environment.GetEnvironmentVariable($"{_loadedConfig.EnvironmentVariablePrefix}_Minor"));
 		}
 
 		public void Execute()
@@ -28,32 +26,30 @@ namespace Wckdrzr.AutomaticBuildNumber
 			CalculateBuildVersion();
 
             //Write VersionInfo	
-            fs.WriteAssemblyInfoFile();
+            _fs.WriteAssemblyInfoFile();
 
             //Write Controller if requested
             if (_loadedConfig.AddVersionController)
-                fs.WriteVersionRoute();
+                _fs.WriteVersionRoute();
 
-            //Save Config Data bacl to CSPROJ
-            fs.WriteAppConfig();
+            //Save Config Data back to CSPROJ
+            _fs.WriteAppConfig();
 		}
 
         private void CalculateBuildVersion()
         {
 			//SeedTime
-            DateTime InitialDate = new DateTime(2019, 11, 19);
-
-            int BuildVersion;
+            DateTime initialDate = new DateTime(2019, 11, 19);
 
             //Calculate the number of days since SeedTime
-            BuildVersion = (int)(DateTime.UtcNow - InitialDate).TotalDays;
+            var buildVersion = (int)(DateTime.UtcNow - initialDate).TotalDays;
 
-            //Add the number of minutes since midnight lastnight
-            double SecondsSinceMidnight = (DateTime.Now - DateTime.Today).TotalSeconds / 10;
+            //Add the number of minutes since midnight last night
+            double secondsSinceMidnight = (DateTime.Now - DateTime.Today).TotalSeconds / 10;
 
-            BuildVersion += (int)SecondsSinceMidnight;
+            buildVersion += (int)secondsSinceMidnight;
 
-			_loadedConfig.BuildNumber = BuildVersion;
+			_loadedConfig.BuildNumber = buildVersion;
 			
 			if (_setMinor)
             {
