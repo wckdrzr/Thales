@@ -3,15 +3,19 @@
     <TargetFramework>net5.0</TargetFramework>
     <RootNamespace>Wckdrzr.AutomaticVersionUpdate</RootNamespace>
     <OutputType>Exe</OutputType>
-    <AssemblyName>auto-version update</AssemblyName>
+    <AssemblyName>Wckdrzr.Thales</AssemblyName>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
-    <PackageId>auto-version-update</PackageId>
+    <PackageId>Wckdrzr.Thales</PackageId>
+      <PackageLicenseFile>LICENSE</PackageLicenseFile>
     <Title>WCKD RZR Auto Version Update</Title>
     <Authors>Jonathan Farina</Authors>
-    <Description>This library will automatically update your projects version numbers on each build</Description>
+    <Description>This library will automatically update your project's version and build numbers on each build</Description>
     <PackageIcon>logo.png</PackageIcon>
     <Company>WCKD RZR</Company>
     <Product>Auto Version Update</Product>
+    <BuildOutputTargetFolder>tools</BuildOutputTargetFolder>
+    <NoPackageAnalysis>true</NoPackageAnalysis>
+    <Version>0.1.4</Version>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <WarningLevel>4</WarningLevel>
@@ -21,10 +25,12 @@
     <PackageReference Include="Microsoft.Build.Utilities.Core" Version="17.2.0" />
   </ItemGroup>
   <ItemGroup>
-    <None Update="logo.png">
-      <Pack>True</Pack>
-      <PackagePath></PackagePath>
-    </None>
-    <None Remove="auto_build_number_config.json" />
+      <None Include="..\..\logo.png" Pack="true" PackagePath="" Visible="false" />
+      <None Include="..\..\LICENSE" Pack="true" PackagePath="" Visible="false" />
+      <None Include="..\..\README.md" Pack="true" PackagePath="" Visible="false" />
   </ItemGroup>
+  <ItemGroup>
+    <Content Include="build\*.targets" PackagePath="build\" />
+  </ItemGroup>
+ 
 </Project>

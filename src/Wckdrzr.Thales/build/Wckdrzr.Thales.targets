@@ -1,12 +1,12 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <PropertyGroup>
-    <AutomaticVersionUpdateTaskAssembly>..\tools\net5.0\auto-version-update.dll</AutomaticVersionUpdateTaskAssembly>
+    <AutomaticVersionUpdateTaskAssembly>..\tools\net5.0\Wckdrzr.Thales.dll</AutomaticVersionUpdateTaskAssembly>
   </PropertyGroup>
 
   <UsingTask AssemblyFile="$(AutomaticVersionUpdateTaskAssembly)" TaskName="Wckdrzr.AutomaticVersionUpdate.MSBuild.OnBuild" />
 
   <Target Name="AutomaticVersionUpdate" AfterTargets="AfterBuild">
-    <Wckdrzr.AutomaticBuildNumber.MSBuild.OnBuild/>
+    <Wckdrzr.AutomaticVersionUpdate.MSBuild.OnBuild/>
   </Target>
 </Project>
