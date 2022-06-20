@@ -7,15 +7,16 @@
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
     <PackageId>Wckdrzr.Thales</PackageId>
       <PackageLicenseFile>LICENSE</PackageLicenseFile>
-    <Title>WCKD RZR Auto Version Update</Title>
+    <Title>WCKD RZR Auto Build Version Update Tool</Title>
     <Authors>Jonathan Farina</Authors>
     <Description>This library will automatically update your project's version and build numbers on each build</Description>
     <PackageIcon>logo.png</PackageIcon>
     <Company>WCKD RZR</Company>
     <Product>Auto Version Update</Product>
+    <RepositoryUrl>https://github.com/wckdrzr/Thales</RepositoryUrl>
     <BuildOutputTargetFolder>tools</BuildOutputTargetFolder>
     <NoPackageAnalysis>true</NoPackageAnalysis>
-    <Version>0.1.6</Version>
+    <Version>0.1.7</Version>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <WarningLevel>4</WarningLevel>

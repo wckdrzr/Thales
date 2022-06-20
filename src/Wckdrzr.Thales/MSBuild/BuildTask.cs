@@ -1,6 +1,4 @@
 ﻿using System;
-using System.IO;
-using Microsoft.Build.Framework;
 using Microsoft.Build.Utilities;
 namespace Wckdrzr.AutomaticVersionUpdate.MSBuild
 {
@@ -9,7 +7,7 @@ namespace Wckdrzr.AutomaticVersionUpdate.MSBuild
         public override bool Execute()
         {
             //Entrypoint
-            Console.WriteLine("Automatic Version Number Package running...");
+            Console.Write("Thales Automatic Version Number Package running...");
             Executor runner = new Executor();
             runner.Execute();
             Console.WriteLine("Version Number update complete");
