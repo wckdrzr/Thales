@@ -12,7 +12,7 @@ namespace Wckdrzr.AutomaticVersionUpdate.IO
 		public readonly PropertyGroup Config;
 		private readonly Serializer _xmlSerializer;
 		private const string ApplicationName = "AutoBuildNumber";
-		private const string CsprojPath = "../../../";
+		private const string CsprojPath = "./";
 
 		public FileServices()
 		{
@@ -37,9 +37,11 @@ namespace Wckdrzr.AutomaticVersionUpdate.IO
 			DirectoryInfo di = new DirectoryInfo(CsprojPath);
 			FileInfo[] projectFile = di.GetFiles("*.csproj");
 
+			if (projectFile==null)
+				throw new Exception($"Can't find the project file for this project. Current search path:{di.FullName}");
 			if (projectFile.Count() > 1)
-				throw new Exception("More than one project file was found");
-
+				throw new Exception("More than one project file was found. Please ensure there is only a single file.");
+			
 			return projectFile[0].FullName;
 		}
 
@@ -68,7 +70,7 @@ namespace Wckdrzr.AutomaticVersionUpdate.IO
 				//check if we've loaded config or created a default
 				if (!Config.IsDefaultConfig)
 				{
-					oldNode = projFileXml.SelectSingleNode("/Project/PropertyGroup[@Label='AutoBuildNumber']");
+					oldNode = projFileXml.SelectSingleNode($"/Project/PropertyGroup[@Label='{ApplicationName}']");
 					if (oldNode != null)
 					{
 						parent = oldNode.ParentNode;

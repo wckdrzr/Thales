@@ -15,7 +15,7 @@
     <Product>Auto Version Update</Product>
     <BuildOutputTargetFolder>tools</BuildOutputTargetFolder>
     <NoPackageAnalysis>true</NoPackageAnalysis>
-    <Version>0.1.4</Version>
+    <Version>0.1.6</Version>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <WarningLevel>4</WarningLevel>
