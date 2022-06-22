@@ -22,9 +22,9 @@ Install from NuGet: https://www.nuget.org/packages/WckdRzr.Thales/
    
    | Feature                                 | Property Name                | Property Type |
    | --------------------------------------- |:----------------------------:|:-------------:|
-   | Environment Variable Prefix to look for | <EnvironmentVariable_Prefix> | String        |
-   | Add Version Controller                  | <AddVersionController>       | Boolean       |
-   | Override the Version File Name          | <VersionInformationFilename> | String        |
+   | Environment Variable Prefix to look for |\<EnvironmentVariable_Prefix> | String        |
+   | Add Version Controller                  | \<AddVersionController>       | Boolean       |
+   | Override the Version File Name          | \<VersionInformationFilename> | String        |
 
 ## License
 
