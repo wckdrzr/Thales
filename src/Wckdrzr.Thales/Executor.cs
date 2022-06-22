@@ -52,21 +52,25 @@ namespace Wckdrzr.AutomaticVersionUpdate
             buildVersion += (int)secondsSinceMidnight;
 
 			_loadedConfig.BuildNumber = buildVersion;
+            Console.WriteLine("Updating Build: " + buildVersion);
 
             if (_setRevision)
             {
                 _loadedConfig.RevisionVersion++;
+                Console.WriteLine("Updating Revision: " + _loadedConfig.RevisionVersion);
             }
 
             if (_setMinor)
             {
 				_loadedConfig.MinorVersion++;
-			}
+                Console.WriteLine("Updating Minor: " + _loadedConfig.MinorVersion);
+            }
 
 			if (_setMajor)
 			{
 				_loadedConfig.MajorVersion++;
-			}
+                Console.WriteLine("Updating Major: " + _loadedConfig.MinorVersion);
+            }
         }
 
 		public void GetVersion()
