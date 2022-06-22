@@ -18,7 +18,7 @@
     <NoPackageAnalysis>true</NoPackageAnalysis>
     <PackageIcon>logo.png</PackageIcon>
     <PackageReadmeFile>README.md</PackageReadmeFile>
-    <Version>0.2.6</Version>
+    <Version>0.2.7</Version>
     <ReleaseVersion>0.2.7</ReleaseVersion>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
