@@ -140,7 +140,7 @@ namespace Wckdrzr.AutomaticVersionUpdate.IO
 
             try
             {
-				File.WriteAllLines($"{ConfigPath}{filename}.cs", fileContents);
+				File.WriteAllLines(ConfigPath+filename, fileContents);
             }
             catch (Exception ex)
             {
