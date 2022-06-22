@@ -14,7 +14,7 @@ Install from NuGet: https://www.nuget.org/packages/WckdRzr.Thales/
 
 2. Run a Build. 
 
-3. The project's csproj file will now contain parameters which include version and build numbers
+3. The project's folder will now contain a settings file which contains parameters which include version and build numbers
 
 4. Addtional params can be set:
 

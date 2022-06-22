@@ -10,6 +10,7 @@ namespace Wckdrzr.AutomaticVersionUpdate
 		private readonly PropertyGroup _loadedConfig;
 		private readonly bool _setMajor;
 		private readonly bool _setMinor;
+        private readonly bool _setRevision;
 
         public Executor()
 		{
@@ -18,7 +19,8 @@ namespace Wckdrzr.AutomaticVersionUpdate
 
 			_setMajor = Convert.ToBoolean(Environment.GetEnvironmentVariable($"{_loadedConfig.EnvironmentVariablePrefix}_Major"));
 			_setMinor = Convert.ToBoolean(Environment.GetEnvironmentVariable($"{_loadedConfig.EnvironmentVariablePrefix}_Minor"));
-		}
+            _setRevision = Convert.ToBoolean(Environment.GetEnvironmentVariable($"{_loadedConfig.EnvironmentVariablePrefix}_Revision"));
+        }
 
 		public void Execute()
         {
@@ -33,7 +35,7 @@ namespace Wckdrzr.AutomaticVersionUpdate
                 _fs.WriteVersionRoute();
 
             //Save Config Data back to CSPROJ
-            _fs.WriteAppConfig();
+            _fs.UpdateAppConfig();
 		}
 
         private void CalculateBuildVersion()
@@ -50,8 +52,13 @@ namespace Wckdrzr.AutomaticVersionUpdate
             buildVersion += (int)secondsSinceMidnight;
 
 			_loadedConfig.BuildNumber = buildVersion;
-			
-			if (_setMinor)
+
+            if (_setRevision)
+            {
+                _loadedConfig.RevisionVersion++;
+            }
+
+            if (_setMinor)
             {
 				_loadedConfig.MinorVersion++;
 			}

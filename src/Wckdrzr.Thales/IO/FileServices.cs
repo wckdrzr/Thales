@@ -9,40 +9,58 @@ namespace Wckdrzr.AutomaticVersionUpdate.IO
 {
 	public class FileServices
 	{
-		public readonly PropertyGroup Config;
+		public PropertyGroup Config;
 		private readonly Serializer _xmlSerializer;
-		private const string ApplicationName = "AutoBuildNumber";
-		private const string CsprojPath = "./";
+		private const string ApplicationName = "Wckdrzr.Thales";
+		private const string FileExtention = ".xml";
+        private const string ConfigPath = "./";
 
-		public FileServices()
+        public FileServices()
 		{
 			_xmlSerializer = new Serializer();	
 
-			Project csProjectFile = _xmlSerializer.Deserialize<Project>(File.ReadAllText(GetPropertyFileLocation()));
+			PropertyGroup propertyGroup = _xmlSerializer.Deserialize<PropertyGroup>(File.ReadAllText(GetPropertyFileLocation()));
 
-			foreach (var propertyGroup in csProjectFile.PropertyGroup)
+			if (propertyGroup.Label == ApplicationName)
 			{
-				if (propertyGroup.Label == ApplicationName)
-				{
-					Config = propertyGroup;
-				}
+				Config = propertyGroup;
 			}
 
 			if (Config == null)
 				Config = CreateDefaultConfig();
 		}
 
+		private void CreatePropertyFile(string filename)
+        {
+            Config = CreateDefaultConfig();
+
+            XmlDocument tempDoc = new XmlDocument();
+            tempDoc.LoadXml(_xmlSerializer.Serialize<PropertyGroup>(Config));
+
+			var settings = new XmlWriterSettings
+			{
+				Indent = true,
+				OmitXmlDeclaration = true
+            };
+
+            var ns = new XmlSerializerNamespaces(new[] { XmlQualifiedName.Empty });
+
+            using var stream = new StreamWriter(filename);
+            using var writer = XmlWriter.Create(stream, settings);
+            tempDoc.Save(writer);
+        }
+
 		private string GetPropertyFileLocation()
         {
-			DirectoryInfo di = new DirectoryInfo(CsprojPath);
-			FileInfo[] projectFile = di.GetFiles("*.csproj");
+			string filename = ConfigPath + $"{ApplicationName}{FileExtention}";
 
-			if (projectFile==null)
-				throw new Exception($"Can't find the project file for this project. Current search path:{di.FullName}");
-			if (projectFile.Count() > 1)
-				throw new Exception("More than one project file was found. Please ensure there is only a single file.");
+            if (!File.Exists(filename))
+			{
+				CreatePropertyFile(filename);
+				return ApplicationName + FileExtention;
+			}
 			
-			return projectFile[0].FullName;
+			return $"{ApplicationName}{FileExtention}";
 		}
 
         private PropertyGroup CreateDefaultConfig()
@@ -51,7 +69,7 @@ namespace Wckdrzr.AutomaticVersionUpdate.IO
 			return defaultConfig;
         }
 
-        public bool WriteAppConfig()
+        public bool UpdateAppConfig()
         {
 			string newPropertyString = _xmlSerializer.Serialize<PropertyGroup>(Config);
 
@@ -67,20 +85,11 @@ namespace Wckdrzr.AutomaticVersionUpdate.IO
 				XmlNode oldNode;
 				XmlNode parent = null;
 
-				//check if we've loaded config or created a default
-				if (!Config.IsDefaultConfig)
+				oldNode = projFileXml.SelectSingleNode($"/PropertyGroup[@Label='{ApplicationName}']");
+				if (oldNode != null)
 				{
-					oldNode = projFileXml.SelectSingleNode($"/Project/PropertyGroup[@Label='{ApplicationName}']");
-					if (oldNode != null)
-					{
-						parent = oldNode.ParentNode;
-						parent.RemoveChild(oldNode);
-					}
-				}
-				else
-                {
-					oldNode = projFileXml.SelectSingleNode("/Project");
-					parent = oldNode;
+					parent = oldNode.ParentNode;
+					parent.RemoveChild(oldNode);
 				}
 
 				XmlNode newNode = tempDoc.DocumentElement;
@@ -109,7 +118,19 @@ namespace Wckdrzr.AutomaticVersionUpdate.IO
 
 		public bool WriteAssemblyInfoFile()
 		{
-            string[] fileContents =
+			string filename = $"{ConfigPath}{Config.VersionInformationFilename}.cs";
+
+			try
+            {
+				if (File.Exists(filename))
+					File.Delete(filename);
+			}
+			catch (Exception ex)
+            {
+				Console.WriteLine(ex.Message);
+            }
+	
+			string[] fileContents =
             {
                 "using System.Reflection;",
                 "using System.Runtime.InteropServices;",
@@ -119,14 +140,7 @@ namespace Wckdrzr.AutomaticVersionUpdate.IO
 
             try
             {
-				string filename = "VersionInfo";
-
-				if (string.IsNullOrEmpty(Config.VersionInformationFilename))
-				{
-					filename = Config.VersionInformationFilename;
-				}
-				
-				File.WriteAllLines($"../../../{filename}.cs", fileContents);
+				File.WriteAllLines($"{ConfigPath}{filename}.cs", fileContents);
             }
             catch (Exception ex)
             {
@@ -160,7 +174,7 @@ namespace Wckdrzr.AutomaticVersionUpdate.IO
 
 			try
 			{
-				File.WriteAllLines($"../../../Controllers/VersionController.cs", fileContents);
+				File.WriteAllLines($"{ConfigPath}Controllers/VersionController.cs", fileContents);
 			}
 			catch (Exception ex)
 			{

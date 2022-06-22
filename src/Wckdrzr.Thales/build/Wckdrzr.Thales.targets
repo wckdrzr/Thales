@@ -6,7 +6,7 @@
 
   <UsingTask AssemblyFile="$(AutomaticVersionUpdateTaskAssembly)" TaskName="Wckdrzr.AutomaticVersionUpdate.MSBuild.OnBuild" />
 
-  <Target Name="AutomaticVersionUpdate" BeforeTargets="BeforeBuild">
+  <Target Name="AutomaticVersionUpdate" BeforeTargets="Build">
     <Wckdrzr.AutomaticVersionUpdate.MSBuild.OnBuild/>
   </Target>
 </Project>

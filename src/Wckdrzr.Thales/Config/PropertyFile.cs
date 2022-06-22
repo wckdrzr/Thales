@@ -68,11 +68,4 @@ namespace Wckdrzr.AutomaticVersionUpdate.Config
 			return $"{MajorVersion}.{MinorVersion}.{RevisionVersion}.{BuildNumber}";
 		}
 	}
-
-	[XmlRoot(ElementName = "Project")]
-	public class Project
-	{
-        [XmlElement(ElementName = "PropertyGroup")]
-        public List<PropertyGroup> PropertyGroup { get; set; }
-	}
 }
